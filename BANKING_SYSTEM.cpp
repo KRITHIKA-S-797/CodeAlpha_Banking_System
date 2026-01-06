@@ -1,126 +1,93 @@
+// Banking System - CodeAlpha Task 2
 #include <iostream>
 #include <string>
 using namespace std;
+
 class Account {
-private:
-    int accountNumber;
-    float balance;
 public:
-    Account(int accNo = 0, float initialBalance = 0.0f)
-        : accountNumber(accNo), balance(initialBalance) {}
+    int accountNumber;
+    double balance;
 
-    int getAccountNumber() const {
-        return accountNumber;
-    }
-
-    float getBalance() const {
-        return balance;
-    }
-
-    void deposit(float amount) {
+    void deposit(double amount) {
         if (amount <= 0) {
-            cout << "Amount must be positive.\n";
+            cout << "Invalid amount!\n";
             return;
         }
         balance += amount;
         cout << "Money deposited successfully.\n";
-        showBalance();
     }
 
-    void withdraw(float amount) {
+    void withdraw(double amount) {
         if (amount <= 0) {
-            cout << "Amount must be positive.\n";
+            cout << "Invalid amount!\n";
             return;
         }
         if (amount > balance) {
             cout << "Not enough balance!\n";
-        } else {
-            balance -= amount;
-            cout << "Money withdrawn successfully.\n";
-            showBalance();
+            return;
         }
+        balance -= amount;
+        cout << "Money withdrawn successfully.\n";
     }
 
-    void showBalance() const {
-        cout << "Current Balance: " << balance << endl;
+    void showBalance() {
+        cout << "Current Balance: $" << balance << endl;
     }
 };
 
 class Customer {
-private:
+public:
     string name;
     Account account;
 
-public:
-    Customer(const string& customerName, int accNo, float initialBalance = 0.0f)
-        : name(customerName), account(accNo, initialBalance) {}
-
-    void showDetails() const {
+    void showDetails() {
         cout << "\nCustomer Name: " << name << endl;
-        cout << "Account Number: " << account.getAccountNumber() << endl;
+        cout << "Account Number: " << account.accountNumber << endl;
         account.showBalance();
-    }
-
-    Account& getAccount() {
-        return account;
     }
 };
 
 int main() {
-    Customer c("Student", 1001, 0.0f);
+    Customer c;
+    cout << "Enter Customer Name: ";
+    cin.ignore();
+    getline(cin, c.name);
+
+    cout << "Enter Account Number: ";
+    cin >> c.account.accountNumber;
+    c.account.balance = 0.0;
+
     int choice = -1;
-    float amount;
+    double amount;
 
-    cout << "==== Simple Banking System ====\n";
+    while (true) {
+        cout << "\n====== Banking Menu ======\n";
+        cout << "1. Deposit\n2. Withdraw\n3. View Account Details\n4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    do {
-        cout << "\n1. Deposit";
-        cout << "\n2. Withdraw";
-        cout << "\n3. View Account Details";
-        cout << "\n4. Exit";
-        cout << "\nEnter your choice: ";
-        
-        if (!(cin >> choice)) {
-            cout << "Invalid input! Exiting.\n";
-            break;
+        switch(choice) {
+            case 1:
+                cout << "Enter amount to deposit: $";
+                cin >> amount;
+                c.account.deposit(amount);
+                break;
+            case 2:
+                cout << "Enter amount to withdraw: $";
+                cin >> amount;
+                c.account.withdraw(amount);
+                break;
+            case 3:
+                c.showDetails();
+                break;
+            case 4:
+                cout << "Thank you for using the banking system! ALICE
+                AL\n";
+                return 0;
+            default:
+                cout << "Invalid choice! Please try again.\n";
         }
-
-        switch (choice) {
-        case 1:
-            cout << "Enter amount to deposit: ";
-            if (cin >> amount) {
-                c.getAccount().deposit(amount);
-            } else {
-                cout << "Invalid amount!\n";
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            }
-            break;
-
-        case 2:
-            cout << "Enter amount to withdraw: ";
-            if (cin >> amount) {
-                c.getAccount().withdraw(amount);
-            } else {
-                cout << "Invalid amount!\n";
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            }
-            break;
-
-        case 3:
-            c.showDetails();
-            break;
-        case 4:
-            cout << "Exiting... Thank you.\n";
-            break;
-
-        default:
-            cout << "Invalid choice!\n";
-            break;
-        }
-
-    } while (choice != 4);
+    }
 
     return 0;
 }
